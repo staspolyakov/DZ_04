@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "DZ_04Character.generated.h"
 
 DECLARE_EVENT(DZ_04Character, FOnGetDamageByTimer)
 DECLARE_EVENT(DZ_04Character, FOnDead)
+
 
 UCLASS(config=Game)
 class ADZ_04Character : public ACharacter
@@ -21,7 +24,7 @@ class ADZ_04Character : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-public:
+	public:
 	ADZ_04Character();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -94,6 +97,15 @@ public:
 
 	UPROPERTY()
 	bool IsHealTicking;
+
+	
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* CollisionBox;
+	
+
+	UPROPERTY()
+	USphereComponent* SphereCollision;
+	
 	
 	FTimerHandle HealTimerHandle;
 	FTimerHandle DamageTimerHandle;
@@ -113,8 +125,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PrintMsg();
 
+	
+	UFUNCTION()
+	void OnActorBeginOverlapFunc(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+	void OnComponentHitFunc(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION()
+	void OnComponentBeginOverlapFunc(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	
 	FOnGetDamageByTimer OnGetDamageByTimer;
 	FOnDead OnDead;
 
+
+	
 };
 

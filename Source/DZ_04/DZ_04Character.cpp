@@ -45,7 +45,18 @@ ADZ_04Character::ADZ_04Character()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	// 
 
+	
+	CollisionBox=CreateDefaultSubobject<UStaticMeshComponent>("BoxCollision");
+	CollisionBox->SetupAttachment(GetRootComponent());
+	
+	//SphereCollision->SetSphereRadius(250.f);
+	//SphereCollision->SetHiddenInGame(false);
+	//SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::ADZ_04Character::OnComponentBeginOverlapFunc);
+	
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::ADZ_04Character::OnComponentBeginOverlapFunc);
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,6 +99,8 @@ void ADZ_04Character::OnResetVR()
 	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
+
+
 
 void ADZ_04Character::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
@@ -145,14 +158,16 @@ void ADZ_04Character::BeginPlay()
 {
 	Super::BeginPlay();
 	Health=10;
-	//если пересеклись - устанавливаем этот таймер 
-	
+	OnActorBeginOverlap.AddDynamic(this, &ADZ_04Character::OnActorBeginOverlapFunc);
 	
 }
+
+
 
 void ADZ_04Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	/*
 	
 	if(IsOverlappingActor(DamageObject) && !IsDamageTicking)
 	{
@@ -175,7 +190,7 @@ void ADZ_04Character::Tick(float DeltaTime)
 		GetWorldTimerManager().ClearTimer(HealTimerHandle);
 		IsHealTicking=false;
 	}
-	
+	*/
 }
 
 
@@ -209,4 +224,21 @@ void ADZ_04Character::GetDeath()
 void ADZ_04Character::PrintMsg()
 {
 	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Red, "MSG");
+}
+
+void ADZ_04Character::OnActorBeginOverlapFunc(AActor* OverlappedActor, AActor* OtherActor)
+{
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Green, "OnActorBeginOverlap");
+}
+
+void ADZ_04Character::OnComponentBeginOverlapFunc(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Purple, "OnComponentBeginOverlap");
+}
+
+void ADZ_04Character::OnComponentHitFunc(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Purple, "OnComponentBeginOverlap");
 }
