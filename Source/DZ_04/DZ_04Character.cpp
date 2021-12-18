@@ -159,7 +159,10 @@ void ADZ_04Character::BeginPlay()
 	Super::BeginPlay();
 	Health=10;
 	OnActorBeginOverlap.AddDynamic(this, &ADZ_04Character::OnActorBeginOverlapFunc);
-	
+	Delegate.AddUFunction(this, "PrintMsg");
+	Delegate.AddUFunction(this, "PrintMsg2");
+	DynamicDelegate.BindUFunction(this,"PrintMsg2");
+	DynamicDelegate.BindUFunction(this,"PrintMsg");
 }
 
 
@@ -221,9 +224,14 @@ void ADZ_04Character::GetDeath()
 	Destroy();
 }
 
-void ADZ_04Character::PrintMsg()
+void ADZ_04Character::PrintMsg(FString Msg)
 {
-	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Red, "MSG");
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Purple, Msg);
+}
+
+void ADZ_04Character::PrintMsg2(FString Msg)
+{
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Red, Msg);
 }
 
 void ADZ_04Character::OnActorBeginOverlapFunc(AActor* OverlappedActor, AActor* OtherActor)
@@ -235,6 +243,8 @@ void ADZ_04Character::OnComponentBeginOverlapFunc(UPrimitiveComponent* Overlappe
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Purple, "OnComponentBeginOverlap");
+	Delegate.Broadcast("Hello");
+	DynamicDelegate.Execute("DYNAMIC");
 }
 
 void ADZ_04Character::OnComponentHitFunc(UPrimitiveComponent* HitComponent, AActor* OtherActor,

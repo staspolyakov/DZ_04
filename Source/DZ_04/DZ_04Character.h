@@ -11,6 +11,9 @@
 DECLARE_EVENT(DZ_04Character, FOnGetDamageByTimer)
 DECLARE_EVENT(DZ_04Character, FOnDead)
 
+DECLARE_MULTICAST_DELEGATE_OneParam( DelegateName, FString );
+
+DECLARE_DYNAMIC_DELEGATE_OneParam( FDelegate, FString, String);
 
 UCLASS(config=Game)
 class ADZ_04Character : public ACharacter
@@ -123,7 +126,10 @@ public:
 	void GetDeath();
 
 	UFUNCTION(BlueprintCallable)
-	void PrintMsg();
+	void PrintMsg(FString Msg);
+
+	UFUNCTION(BlueprintCallable)
+	void PrintMsg2(FString Msg);
 
 	
 	UFUNCTION()
@@ -140,7 +146,10 @@ public:
 	
 	FOnGetDamageByTimer OnGetDamageByTimer;
 	FOnDead OnDead;
+	DelegateName Delegate;
 
+	FDelegate DynamicDelegate;
+	
 // Just the Test for Git
 	//New Branch
 
